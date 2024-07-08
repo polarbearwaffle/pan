@@ -10,6 +10,63 @@
             line-height: 1.6;
             margin: 20px;
         }
+        .comments {
+            margin: 20px 0;
+        }
+        .comments h2 {
+            font-size: 2em;
+            margin-bottom: 1em;
+        }
+        .comments form {
+            margin-bottom: 1em;
+        }
+        .comments input, .comments textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .comments button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: white;
+            cursor: pointer;
+        }
+        .comments button:hover {
+            background-color: #2980b9;
+        }
+        .comments-list {
+            list-style: none;
+            padding: 0;
+        }
+        .comments-list li {
+            background: #f9f9f9;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .comments-list li p {
+            margin: 0;
+        }
+        .delete-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        .delete-button:hover {
+            background-color: darkred;
+        }
     </style>
 </head>
 <body>
@@ -39,5 +96,83 @@
         <li>Second item in the ordered list</li>
         <li>Third item in the ordered list</li>
     </ol>
+
+    <!-- Comments Section -->
+    <div class="comments">
+        <h2>Leave a Comment</h2>
+        <form id="commentForm">
+            <input type="text" id="name" placeholder="Your name" required>
+            <textarea id="comment" rows="4" placeholder="Your comment" required></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <ul class="comments-list" id="commentsList"></ul>
+    </div>
+
+    <script>
+        // Unique key for the article's comments in localStorage
+        const articleKey = 'comments_article_AAA';
+
+        // 获取评论数据
+        function getComments() {
+            const comments = localStorage.getItem(articleKey);
+            return comments ? JSON.parse(comments) : [];
+        }
+
+        // 保存评论数据
+        function saveComments(comments) {
+            localStorage.setItem(articleKey, JSON.stringify(comments));
+        }
+
+        // 显示评论
+        function displayComments() {
+            const commentsList = document.getElementById('commentsList');
+            commentsList.innerHTML = '';
+            const comments = getComments();
+            comments.forEach((comment, index) => {
+                const commentElement = document.createElement('li');
+                commentElement.innerHTML = `<p><strong>${comment.name}</strong></p><p>${comment.text}</p><button class="delete-button" onclick="deleteComment(${index})">Delete</button>`;
+                commentsList.appendChild(commentElement);
+            });
+        }
+
+        // 删除评论
+        function deleteComment(index) {
+            const password = prompt('Enter password to delete this comment:');
+            if (password === 'your-password') {
+                const comments = getComments();
+                comments.splice(index, 1);
+                saveComments(comments);
+                displayComments();
+            } else {
+                alert('Incorrect password.');
+            }
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 获取表单数据
+            const name = document.getElementById('name').value;
+            const comment = document.getElementById('comment').value;
+            
+            // 获取现有评论
+            const comments = getComments();
+            
+            // 添加新的评论
+            comments.push({ name, text: comment });
+            
+            // 保存评论
+            saveComments(comments);
+            
+            // 显示评论
+            displayComments();
+            
+            // 清空表单
+            document.getElementById('commentForm').reset();
+        });
+
+        // 页面加载时显示评论
+        document.addEventListener('DOMContentLoaded', displayComments);
+    </script>
 </body>
 </html>
