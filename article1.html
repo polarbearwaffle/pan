@@ -26,6 +26,12 @@
             margin: 5px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
+            box-sizing: border-box; /* 保证元素宽度包含内边距和边框 */
+        }
+        .comments textarea {
+            resize: vertical;
+            white-space: pre-wrap; /* 保证换行符和空白符可以正确显示 */
+            word-wrap: break-word; /* 自动换行 */
         }
         .comments button {
             padding: 10px 20px;
@@ -130,7 +136,8 @@
             const comments = getComments();
             comments.forEach((comment, index) => {
                 const commentElement = document.createElement('li');
-                commentElement.innerHTML = `<p><strong>${comment.name}</strong></p><p>${comment.text}</p><button class="delete-button" onclick="deleteComment(${index})">Delete</button>`;
+                const formattedComment = comment.text.replace(/\n/g, '<br>'); // 将换行符转换为 <br>
+                commentElement.innerHTML = `<p><strong>${comment.name}</strong></p><p>${formattedComment}</p><button class="delete-button" onclick="deleteComment(${index})">Delete</button>`;
                 commentsList.appendChild(commentElement);
             });
         }
